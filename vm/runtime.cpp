@@ -551,7 +551,7 @@ bool VmRuntime::launch(const Json::Value& config, const BootPlan& plan, std::str
             // An empty data_dir means the app's own /data/data directory, as for the command.
             HostFacts host; host.data_dir = context_.data_dir;
             const auto data = command::data_dir(host);
-            if (!crosvm_disk_capabilities_supported(data + "/usr/bin/crosvm", data + "/usr/lib",
+            if (!crosvm_disk_capabilities_supported(crosvm_executable(config, host), data + "/usr/lib",
                     [this] { return stopped_by_user_ || context_.shutting_down(); })) {
                 // Released crosvm builds cannot take retained backing chains. Launch exactly as
                 // the Java daemon did (paths, optimized sdcard paths, backing from headers);

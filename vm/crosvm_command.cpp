@@ -594,7 +594,7 @@ struct Builder {
         strace(launch);
         const auto& name = member(item, "name");
         if (!name.isString()) throw std::invalid_argument("VM name is not a string");
-        for (auto arg : {path_join(data_dir, "usr", "bin", "crosvm"), std::string("--extended-status"), std::string("run"), std::string("--name"), name.asString()})
+        for (auto arg : {crosvm_executable(item, host), std::string("--extended-status"), std::string("run"), std::string("--name"), name.asString()})
             args.push_back(std::move(arg));
         args.push_back("--mem");
         args.push_back(decimal(std::max<int64_t>(integer(item, "memory_mb", 512), 64)));
@@ -701,6 +701,12 @@ bool crosvm_retained_chain_supported(const Json::Value& caps) {
     for (const auto* name : {"proc_fd", "raw", "qcow2", "block", "scsi"})
         if (!caps[name].isBool() || !caps[name].asBool()) return false;
     return true;
+}
+std::string crosvm_executable(const Json::Value& config, const HostFacts& host) {
+    const auto runtime = string(config, "crosvm_runtime", "default");
+    if (runtime != "default" && runtime != "macos")
+        throw std::invalid_argument("Unknown crosvm runtime");
+    return path_join(data_dir(host), "usr", "bin", runtime == "macos" ? "crosvm-macos" : "crosvm");
 }
 CrosvmLaunch crosvm_command(const Json::Value& config, const CrosvmRun& run, const BootPlan& boot, const HostFacts& host) {
     if (!config.isObject()) throw std::invalid_argument("VM config must be an object");

@@ -88,6 +88,7 @@ struct CrosvmLaunch {
 // Expects droidvm::config::migrate_vm output. Throws std::runtime_error or
 // std::invalid_argument where the Java start would fail.
 CrosvmLaunch crosvm_command(const Json::Value& config, const CrosvmRun& run, const BootPlan& boot, const HostFacts& host);
+std::string crosvm_executable(const Json::Value& config, const HostFacts& host);
 bool crosvm_retained_chain_supported(const Json::Value& capabilities);
 // PoolPreflight.appliesTo: the configured or preferred hypervisor is Gunyah.
 bool resolves_to_gunyah(const Json::Value& item, const HostFacts& host);
